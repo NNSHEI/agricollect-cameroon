@@ -1,0 +1,10 @@
+^G     (F1)      Afficher ce message
+^C               Annuler la fonction courante
+
+^W               Aller au début du paragraphe, puis à celui du précédent
+^O               Aller à la fin du paragraphe, puis à celle du suivant
+
+^Y               Aller à la première ligne du fichier
+^V               Aller à la dernière ligne du fichier
+
+^T               Rechercher vers l'avant une chaîne ou une exp. rationnelle
