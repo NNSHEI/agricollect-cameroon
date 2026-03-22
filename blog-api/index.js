@@ -1,0 +1,11 @@
+const express = require('express');const low = require('lowdb');const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('blog.json');const db = low(adapter);
+db.defaults({ articles: [], nextId: 1 }).write();
+const app = express();app.use(express.json());
+app.post('/api/articles', (req, res) => {  const { titre, contenu, auteur, date, categorie, tags } = req.body;  if (!titre || !contenu || !auteur) {    return res.status(400).json({ message: 'titre, contenu et auteur sont obligatoires' });  }  const id = db.get('nextId').value();  const article = { id, titre, contenu, auteur, date, categorie, tags };  db.get('articles').push(article).write();  db.update('nextId', n => n + 1).write();  res.status(201).json({ id, message: 'Article créé avec succès' });});
+app.get('/api/articles', (req, res) => {  const articles = db.get('articles').value();  res.status(200).json({ articles });});
+app.get('/api/articles/search', (req, res) => {  const query = req.query.query || '';  const articles = db.get('articles').filter(a =>    a.titre.includes(query) || a.contenu.includes(query)  ).value();  res.status(200).json({ articles });});
+app.get('/api/articles/:id', (req, res) => {  const article = db.get('articles').find({ id: parseInt(req.params.id) }).value();  if (!article) return res.status(404).json({ message: 'Article non trouvé' });  res.status(200).json(article);});
+app.put('/api/articles/:id', (req, res) => {  const { titre, contenu, auteur, date, categorie, tags } = req.body;  const article = db.get('articles').find({ id: parseInt(req.params.id) }).value();  if (!article) return res.status(404).json({ message: 'Article non trouvé' });  db.get('articles').find({ id: parseInt(req.params.id) }).assign({ titre, contenu, auteur, date, categorie, tags }).write();  res.status(200).json({ message: 'Article modifié avec succès' });});
+app.delete('/api/articles/:id', (req, res) => {  const article = db.get('articles').find({ id: parseInt(req.params.id) }).value();  if (!article) return res.status(404).json({ message: 'Article non trouvé' });  db.get('articles').remove({ id: parseInt(req.params.id) }).write();  res.status(200).json({ message: 'Article supprimé avec succès' });});
+app.listen(3000, () => {  console.log('Serveur démarré sur le port 3000');});

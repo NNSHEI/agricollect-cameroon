@@ -1,0 +1,13 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "titre": "Mon premier article",
+      "contenu": "Ceci est le contenu",
+      "auteur": "Berny",
+      "categorie": "Tech",
+      "tags": "node,api"
+    }
+  ],
+  "nextId": 2
+}
